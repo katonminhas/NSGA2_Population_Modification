@@ -39,24 +39,31 @@ def euclidean_dist(point1, point2):
     distance = math.sqrt(squared_distance)
     return distance
 
+
+def get_closest_dist(point, problem_name):
+    front = get_actual_solution(problem_name, 100)
+    closest_dist = np.inf
+    for actual_point in front:
+        dist = euclidean_dist(point, actual_point)
+        if dist < closest_dist:
+            closest_dist = dist
+    return closest_dist
+
 # Takes values object
 def generational_distance(front, problem_name):
-    actual_front = get_actual_solution(problem_name, len(front)*100)
-    
-    # For point in front
-    # calculate distance between each point in actual front, keeping track of the closest
-    # append the closest to a list
     closest_distances = []
+    max_distance = -1
+    min_distance = np.inf
     for i in range(len(front[0])):
         front_point = [front[o][i] for o in front.keys()]
-        closest_dist = np.inf
-        for actual_point in actual_front:
-            dist = euclidean_dist(front_point, actual_point)
-            if dist < closest_dist:
-                closest_dist = dist
+        closest_dist = get_closest_dist(front_point, problem_name)
+        if closest_dist < min_distance:
+            min_distance = closest_dist
+        if closest_dist > max_distance:
+            max_distance = closest_dist
+        
         closest_distances.append(closest_dist)
-    
-    return (np.sum(closest_distances)**(1/len(front)))/len(front[0])
+    return (np.sum(closest_distances)**(1/len(front)))/len(front[0]), min_distance, max_distance
 
 
 

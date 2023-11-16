@@ -21,13 +21,14 @@ mutation_rate=1/solution_size
 test_problems = ['zdt1', 'zdt2', 'zdt3', 'zdt4', 'zdt6']
 
 population_mods = ['base',
-                   'proportional', 'gavaps',
-                   'naive_linear', 'naive_exponential', 'naive_bell']
+                   'proportional', 'inverse_proportional',
+                   'gavaps',
+                   'naive_linear', 'naive_power', 'naive_bell']
 
 test_problem = 'zdt1'
 
 sol, val, pop_tracker, fitness_tracker = nsga2_mod.run(test_prob=test_problem, 
-                                          modification='base', 
+                                          modification='inverse_proportional', 
                                           pop_size=pop_size, 
                                           pop_min = round(pop_size/10),
                                           max_gen=max_gen, 
@@ -37,7 +38,7 @@ sol, val, pop_tracker, fitness_tracker = nsga2_mod.run(test_prob=test_problem,
                                           mutation_rate=mutation_rate)
 
 # Generational Distance
-gen_dist = evaluation.generational_distance(val, test_problem)
+gen_dist, min_dist, max_dist = evaluation.generational_distance(val, test_problem)
 
 
 if len(val) == 2:
