@@ -119,29 +119,7 @@ def zdt4(n=10):
         return h(f1(x), g(x))
     return f1, f2
     
-#%% zdt5
 
-def zdt5(n=11):
-    def u(xi):
-        return str(xi).count('1')
-    def f1(x):
-        return 1 + u(x[0])
-    def v(x):
-        ux = u(x)
-        if ux < 5:
-            return 2 + ux
-        else:
-            return 1 
-    def g(x):
-        return sum([v(u(xi)) for xi in x])
-    
-    def h(fx, gx):
-        return 1/fx
-    
-    def f2(x):
-        return h(f1(x), g(x))
-    return f1, f2
-    
 #%% zdt6
 
 def zdt6(n=10):

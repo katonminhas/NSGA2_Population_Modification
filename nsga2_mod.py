@@ -5,6 +5,7 @@ if "C:/Users/katon/Documents/JHU/Evo_Swarm/Research_Paper/" not in sys.path:
     sys.path.append("C:/Users/katon/Documents/JHU/Evo_Swarm/Research_Paper/")
 import func as fn
 from initialization import initialize
+from individual import Individual
 import population_modifications as mods
 import evaluation
 import random
@@ -24,7 +25,7 @@ def run(test_prob,
     
     
     # Initialization
-    solution, functions, params = initialize(problem_name=test_prob, 
+    population, functions, params = initialize(problem_name=test_prob, 
                                              pop_size=pop_size, 
                                              n=solution_size, 
                                              M=problem_size)
@@ -34,24 +35,21 @@ def run(test_prob,
     pop_tracker = []
     fitness_tracker = []
     
-    
+
    
     # Main Loop
     gen_no=0
     while (gen_no<max_gen) :
         if gen_no%1 ==0: print("Generation: ", gen_no)
-        
-        # Update trackers
-        pop_tracker.append(len(solution))      
+        pop_tracker.append(len(population))      
         
         
-        #print("Age: ", age_tracker)
-        #print("Lifetime: ", lifetime_tracker)
-        
+        # Get fitness values of current solution
         if 'dtlz' not in test_prob:
-            values = {o : [functions[o](solution[i]) for i in range(len(solution))] for o in range(len(functions))}      
+            values = {o : [functions[o](population[i].solution) for i in range(len(population))] for o in range(len(functions))}      
         else:
-            values = {o : [functions(solution[i], o) for i in range(len(solution))] for o in range(problem_size)}
+            values = {o : [functions(population[i].solution, o) for i in range(len(population))] for o in range(problem_size)}
+        
         
         non_dominated_sorted_solution = fn.fast_non_dominated_sort(values)
         # print(len(non_dominated_sorted_solution[0]))
@@ -65,19 +63,20 @@ def run(test_prob,
         for i in range(len(non_dominated_sorted_solution)):
             crowding_distance_values.append(fn.crowding_distance(values, non_dominated_sorted_solution[i]))
         
-        solution2 = solution.copy()
+        population2 = population.copy()
         #Generating offsprings
-        while(len(solution2)!=2*len(solution)):
-            a1 = random.randint(0,len(solution)-1)
-            b1 = random.randint(0,len(solution)-1)
-            cross = fn.crossover(solution[a1], solution[b1], crossover_rate)
-            offspring = fn.mutation(cross, mutation_rate, params)
-            solution2.append(offspring)
+        while(len(population2)!=2*len(population)):
+            a1 = random.randint(0,len(population)-1)
+            b1 = random.randint(0,len(population)-1)
+            cross_solution = fn.crossover(population[a1].solution, population[b1].solution, crossover_rate)
+            offspring_solution = fn.mutation(cross_solution, mutation_rate, params)
+            new_individual = Individual(solution=offspring_solution, age=0, lifetime=0)
+            population2.append(new_individual)
         
         if 'dtlz' not in test_prob:
-            values2 = {o : [functions[o](solution2[i]) for i in range(len(solution2))] for o in range(len(functions))}
+            values2 = {o : [functions[o](population2[i].solution) for i in range(len(population2))] for o in range(len(functions))}
         else: 
-            values2 = {o : [functions(solution2[i], o) for i in range(len(solution2))] for o in range(problem_size)}
+            values2 = {o : [functions(population2[i].solution, o) for i in range(len(population2))] for o in range(problem_size)}
         
         non_dominated_sorted_solution2 = fn.fast_non_dominated_sort(values2)
         
@@ -103,22 +102,22 @@ def run(test_prob,
             pop_size = mods.naive_bell(initial_pop_size, pop_min, gen_no+1, max_gen)
         
         # Create new solution
-        new_solution= []
+        new_population= []
         for i in range(0,len(non_dominated_sorted_solution2)):
             non_dominated_sorted_solution2_1 = [fn.index_of(non_dominated_sorted_solution2[i][j],non_dominated_sorted_solution2[i] ) for j in range(0,len(non_dominated_sorted_solution2[i]))]
             front22 = fn.sort_by_vals(non_dominated_sorted_solution2_1, crowding_distance_values2[i])
             front = [non_dominated_sorted_solution2[i][front22[j]] for j in range(0,len(non_dominated_sorted_solution2[i]))]
             front.reverse()
             for value in front:
-                new_solution.append(value)
-                if(len(new_solution)==pop_size):
+                new_population.append(value)
+                if(len(new_population)==pop_size):
                     break
-            if (len(new_solution) == pop_size):
+            if (len(new_population) == pop_size):
                 break
     
-        new_solution = list(set(new_solution))
+        new_population = list(set(new_population))
         #print("New solution: ", new_solution)
-        solution = [solution2[i] for i in new_solution]
+        population = [population2[i] for i in new_population]
         
         # Iterate to next gen
         if 'dtlz' not in test_prob:
@@ -130,4 +129,4 @@ def run(test_prob,
 
         gen_no = gen_no + 1
     
-    return solution, values, pop_tracker, fitness_tracker
+    return population, values, pop_tracker, fitness_tracker

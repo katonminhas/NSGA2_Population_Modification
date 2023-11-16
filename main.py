@@ -23,12 +23,12 @@ test_problems = ['zdt1', 'zdt2', 'zdt3', 'zdt4', 'zdt6']
 population_mods = ['base',
                    'proportional', 'inverse_proportional',
                    'gavaps',
-                   'naive_linear', 'naive_power', 'naive_bell']
+                   'naive_linear', 'naive_power']
 
 test_problem = 'zdt1'
 
 sol, val, pop_tracker, fitness_tracker = nsga2_mod.run(test_prob=test_problem, 
-                                          modification='inverse_proportional', 
+                                          modification='base', 
                                           pop_size=pop_size, 
                                           pop_min = round(pop_size/10),
                                           max_gen=max_gen, 
