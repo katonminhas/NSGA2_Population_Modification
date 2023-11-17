@@ -9,12 +9,13 @@ import evaluation
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 #%% Globals
 pop_size = 100
-max_gen = 10
-solution_size = 10
-problem_size=3
+max_gen = 10000
+solution_size = 20
+problem_size=2
 crossover_rate=0.9
 mutation_rate=1/solution_size
 
@@ -30,7 +31,7 @@ population_mods = ['base',
 test_problem = 'zdt1'
 modification = 'base'
 
-sol, val, pop_tracker, fitness_tracker = nsga2_mod.run(test_prob=test_problem, 
+sol, val, converge_gen, pop_tracker, fitness_tracker = nsga2_mod.run(test_prob=test_problem, 
                                           modification=modification, 
                                           pop_size=pop_size, 
                                           pop_min = round(pop_size/10),
@@ -39,8 +40,6 @@ sol, val, pop_tracker, fitness_tracker = nsga2_mod.run(test_prob=test_problem,
                                           problem_size=problem_size,
                                           crossover_rate=crossover_rate,
                                           mutation_rate=mutation_rate)
-
-
 
 
 if len(val) == 2:

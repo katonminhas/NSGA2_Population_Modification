@@ -46,8 +46,9 @@ def get_actual_solution(problem_name, n_var, n_obj, n_pareto_points):
     
 
 def euclidean_dist(point1, point2):
-    squared_distance = sum((p1-p2)**2 for p1, p2 in zip(point1, point2))
-    distance = math.sqrt(squared_distance)
+    point1 = np.array(point1)
+    point2 = np.array(point2)
+    distance = np.sqrt(np.sum((point1 - point2) ** 2))
     return distance
 
 
@@ -60,21 +61,27 @@ def get_closest_dist(point, n_var, n_obj, current_pop, problem_name):
             closest_dist = dist
     return closest_dist
 
+
 # Takes values object
 def generational_distance(front, n_var, n_obj, problem_name):
     closest_distances = []
-    max_distance = -1
-    min_distance = np.inf
-    for i in range(len(front[0])):
-        front_point = [front[o][i] for o in front.keys()]
-        closest_dist = get_closest_dist(front_point, n_var, n_obj, len(front[0]), problem_name)
-        if closest_dist < min_distance:
-            min_distance = closest_dist
-        if closest_dist > max_distance:
-            max_distance = closest_dist
-        
+    min_dist, max_dist = np.inf, -1
+    front_length = len(front[0])
+    for i in range(front_length):
+        point = [front[o][i] for o in range(n_obj)]
+        closest_dist = get_closest_dist(point, n_var, n_obj, front_length, problem_name)
         closest_distances.append(closest_dist)
-    return (np.sum(closest_distances)**(1/len(front)))/len(front[0]), min_distance, max_distance
+        if closest_dist < min_dist:
+            min_dist = closest_dist
+        if closest_dist > max_dist:
+            max_dist = closest_dist
+    gen_dist = (sum([dist**2 for dist in closest_distances])**(1/2))/front_length
+    avg_dist = np.mean(closest_distances)
+    return gen_dist, avg_dist, min_dist, max_dist
+    
+    
+    
+    
 
 
 

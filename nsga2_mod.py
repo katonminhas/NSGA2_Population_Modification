@@ -11,7 +11,7 @@ import evaluation
 import random
 import math
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 def run(test_prob, 
         modification, 
@@ -30,18 +30,22 @@ def run(test_prob,
                                              n=solution_size, 
                                              M=problem_size)
     
-    
     initial_pop_size = pop_size
     pop_tracker = []
     fitness_tracker = []
-    min_lifetime, max_lifetime = 1, 10
+    min_lifetime, max_lifetime = 1.1, 7.1
     
     
    
     # Main Loop
     gen_no=0
-    while (gen_no<max_gen) :
-        if gen_no%100 ==0: print("Generation: ", gen_no)
+    best_fitness, best_fitness_gen = np.inf, -1
+    best_population = []
+    
+    while (gen_no<max_gen):
+        
+        if gen_no%1 ==0: print("Generation: ", gen_no)
+        
         pop_tracker.append(len(population))      
         #print("Pop length: ", len(population))
         # for ind in population:
@@ -122,14 +126,14 @@ def run(test_prob,
         
 
         # Iterate to next gen
-        gen_dist, min_dist, max_dist = evaluation.generational_distance(values , solution_size, problem_size, test_prob)
+        gen_dist, avg_dist, min_dist, max_dist = evaluation.generational_distance(values , solution_size, problem_size, test_prob)
         gen_fitness = round(gen_dist, 3)
         fitness_tracker.append(gen_fitness)
         
         # Initialize lifetimes
         for ind in population:
             if ind.lifetime == -1:
-                ind.set_lifetime(fitness_tracker, min_dist, max_dist, min_lifetime, max_lifetime, functions, solution_size, problem_size, len(population), test_prob)
+                ind.set_lifetime(avg_dist, min_dist, max_dist, min_lifetime, max_lifetime, functions, solution_size, problem_size, len(population), test_prob)
 
         # Increase age
         for ind in population:
@@ -144,7 +148,16 @@ def run(test_prob,
                     keep_idx.append(i)
             population = [population[i] for i in keep_idx]
         
+        
+        
+        if gen_fitness < best_fitness:
+            best_fitness = gen_fitness
+            best_fitness_gen = gen_no
+            best_population = population
+            best_values = values
+        
+        if (gen_no > (best_fitness_gen + 100)) or (len(population) == 0): # if no progress for 100 generations, then converged
+            return best_population, best_values, best_fitness_gen, pop_tracker, fitness_tracker
+        
         gen_no = gen_no + 1
-    
-    
     return population, values, pop_tracker, fitness_tracker
