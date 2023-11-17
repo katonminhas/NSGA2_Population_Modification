@@ -19,14 +19,15 @@ def dominates(ind1, ind2, values):
         value1_obj = values[obj][ind1]
         value2_obj = values[obj][ind2]
         
-        if value1_obj < value2_obj:
+        if value1_obj > value2_obj:
             return False
-        elif value1_obj > value2_obj:
+        elif value1_obj < value2_obj:
             dominates_ind1 = True
     return dominates_ind1
 
 
-def fast_non_dominated_sort(values):
+def fast_non_dominated_sort(VAL):
+    values = VAL.copy()
     num_solutions = len(values[0])
     
     S = [[] for i in range(num_solutions)]
@@ -66,7 +67,9 @@ def fast_non_dominated_sort(values):
 
 
 #%% Calculate Crowding Distance
-def sort_by_vals(list1, vals):
+def sort_by_vals(L1, VAL):
+    vals = VAL.copy()
+    list1 = L1.copy()
     sorted_list = []
     while(len(sorted_list)!=len(list1)):
         if index_of(min(vals),vals) in list1:
@@ -75,7 +78,9 @@ def sort_by_vals(list1, vals):
     return sorted_list
 
 
-def crowding_distance(values, front):
+def crowding_distance(VAL, FRONT):
+    values = VAL.copy()
+    front = FRONT.copy()
     if len(front) > 0:
         solutions_num = len(front)
         num_objectives = len(values)
@@ -107,12 +112,15 @@ def crossover(a, b, crossover_rate):
     return crossed
 
 #%% Mutation
-def mutation(solution, mutation_rate, params):
+def mutation(solution, mutation_rate, params, test_prob):
     mutated_solution = []
     for s in solution:
         r = random.random()
         if r < mutation_rate:
-            mutated_solution.append(params['min_x'] + (params['max_x'] - params['min_x']) * random.random())
+            if test_prob != 'zdt5':
+                mutated_solution.append(params['min_x'] + (params['max_x'] - params['min_x']) * random.random())
+            else:
+                mutated_solution.append(random.randint(0,1))
         else:
             mutated_solution.append(s)
     return mutated_solution

@@ -16,59 +16,80 @@ def initialize(problem_name, pop_size, n=10, M=10):
     
     # DTLZ
     if problem_name=='dtlz1':
-        params = {'min_x' : 0, 'max_x' : 1}
-        solutions = [[random.random() for ind in range(n)] for i in range(pop_size)] # solutions is a list of dicts of floats
-        functions = test_problems.dtlz1(n, M) # return list of test problems 
-        return solutions, functions, params
-    
+        params = {'min_x' : 0, 'max_x' : 1, 'n' : n}
+        population = [Individual(solution=[random.random() for i in range(params['n'])],
+                                 age=0,
+                                 lifetime=-1)
+                      for p in range(pop_size)]
+        
+        functions = test_problems.dtlz1(n, M)
+        return population, functions, params
+    if problem_name=='dtlz2':
+        params = {'min_x' : 0, 'max_x' : 1, 'n' : n}
+        population = [Individual(solution=[random.random() for i in range(params['n'])],
+                                 age=0,
+                                 lifetime=-1)
+                      for p in range(pop_size)]
+        
+        functions = test_problems.dtlz2(n, M)
+        return population, functions, params
+    if problem_name=='dtlz3':
+        params = {'min_x' : 0, 'max_x' : 1, 'n' : n}
+        population = [Individual(solution=[random.random() for i in range(params['n'])],
+                                 age=0,
+                                 lifetime=-1)
+                      for p in range(pop_size)]
+        
+        functions = test_problems.dtlz3(n, M)
+        return population, functions, params
+    if problem_name=='dtlz4':
+        params = {'min_x' : 0, 'max_x' : 1, 'n' : n}
+        population = [Individual(solution=[random.random() for i in range(params['n'])],
+                                 age=0,
+                                 lifetime=-1)
+                      for p in range(pop_size)]
+        
+        functions = test_problems.dtlz4(n, M)
+        return population, functions, params
     
     # ZDT
     if problem_name=='zdt1':
         params = {'min_x' : 0, 'max_x' : 1, 'n' : 30}
         population = [Individual(solution=[random.random() for i in range(params['n'])],
                                  age=0,
-                                 lifetime=0)
+                                 lifetime=-1)
                       for p in range(pop_size)]
         
-        functions = test_problems.zdt1(n)
+        functions = test_problems.zdt1(30)
         return population, functions, params
     
     if problem_name=='zdt2':
         params = {'min_x' : 0, 'max_x' : 1, 'n' : 30}
         population = [Individual(solution=[random.random() for i in range(params['n'])],
                                  age=0,
-                                 lifetime=0)
+                                 lifetime=-1)
                       for p in range(pop_size)]
         
-        functions = test_problems.zdt2(n)
+        functions = test_problems.zdt2()
         return population, functions, params
     if problem_name=='zdt3':
         params = {'min_x' : 0, 'max_x' : 1, 'n' : 30}
         population = [Individual(solution=[random.random() for i in range(params['n'])],
                                  age=0,
-                                 lifetime=0)
+                                 lifetime=-1)
                       for p in range(pop_size)]
         
-        functions = test_problems.zdt3(n)
+        functions = test_problems.zdt3()
         return population, functions, params
     if problem_name=='zdt4':
         params = {'min_x' : 0, 'max_x' : 1, 'n' : 10}
         population = [Individual(solution=[random.random() for i in range(params['n'])],
                                  age=0,
-                                 lifetime=0)
+                                 lifetime=-1)
                       for p in range(pop_size)]
         
-        functions = test_problems.zdt4(n)
+        functions = test_problems.zdt4()
         return population, functions, params
-    if problem_name=='zdt6':
-        params = {'min_x' : 0, 'max_x' : 1, 'n' : 10}
-        population = [Individual(solution=[random.random() for i in range(params['n'])],
-                                 age=0,
-                                 lifetime=0)
-                      for p in range(pop_size)]
-        functions = test_problems.zdt6(n)
-        return population, functions, params
-    
     
     
     

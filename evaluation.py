@@ -1,9 +1,10 @@
 
 import numpy as np
 import math
+from dtlz import DTLZ1, DTLZ2, DTLZ3, DTLZ4
 
 # Return the actual pareto fronts of each problem
-def get_actual_solution(problem_name, n_pareto_points):
+def get_actual_solution(problem_name, n_var, n_obj, n_pareto_points):
     if problem_name=='zdt1':
         x = np.linspace(0, 1, n_pareto_points)
         return np.array([x, 1 - np.sqrt(x)]).T
@@ -27,11 +28,21 @@ def get_actual_solution(problem_name, n_pareto_points):
     if problem_name=='zdt4':
         x = np.linspace(0, 1, n_pareto_points)
         return np.array([x, 1 - np.sqrt(x)]).T
+    if problem_name=='zdt5':
+        x = 1 + np.linspace(0,1, n_pareto_points)*30
+        pf = np.column_stack([x, 10/x])
+        return pf
     if problem_name=='zdt6':
         x = np.linspace(0.2807753191, 1, n_pareto_points)
         return np.array([x, 1 - np.power(x, 2)]).T
-    
-    
+    if problem_name=='dtlz1':
+        return DTLZ1(n_var, n_obj)._calc_pareto_front()
+    if problem_name=='dtlz2':
+        return DTLZ2(n_var, n_obj)._calc_pareto_front()
+    if problem_name=='dtlz3':
+        return DTLZ3(n_var, n_obj)._calc_pareto_front()
+    if problem_name=='dtlz4':
+        return DTLZ4(n_var, n_obj)._calc_pareto_front()
     
 
 def euclidean_dist(point1, point2):
@@ -40,8 +51,8 @@ def euclidean_dist(point1, point2):
     return distance
 
 
-def get_closest_dist(point, problem_name):
-    front = get_actual_solution(problem_name, 100)
+def get_closest_dist(point, n_var, n_obj, current_pop, problem_name):
+    front = get_actual_solution(problem_name, n_var, n_obj, current_pop)
     closest_dist = np.inf
     for actual_point in front:
         dist = euclidean_dist(point, actual_point)
@@ -50,13 +61,13 @@ def get_closest_dist(point, problem_name):
     return closest_dist
 
 # Takes values object
-def generational_distance(front, problem_name):
+def generational_distance(front, n_var, n_obj, problem_name):
     closest_distances = []
     max_distance = -1
     min_distance = np.inf
     for i in range(len(front[0])):
         front_point = [front[o][i] for o in front.keys()]
-        closest_dist = get_closest_dist(front_point, problem_name)
+        closest_dist = get_closest_dist(front_point, n_var, n_obj, len(front[0]), problem_name)
         if closest_dist < min_distance:
             min_distance = closest_dist
         if closest_dist > max_distance:

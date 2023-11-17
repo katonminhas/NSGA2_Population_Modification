@@ -34,15 +34,18 @@ def run(test_prob,
     initial_pop_size = pop_size
     pop_tracker = []
     fitness_tracker = []
+    min_lifetime, max_lifetime = 1, 10
     
-
+    
    
     # Main Loop
     gen_no=0
     while (gen_no<max_gen) :
-        if gen_no%1 ==0: print("Generation: ", gen_no)
+        if gen_no%100 ==0: print("Generation: ", gen_no)
         pop_tracker.append(len(population))      
-        
+        #print("Pop length: ", len(population))
+        # for ind in population:
+        #     ind.print()
         
         # Get fitness values of current solution
         if 'dtlz' not in test_prob:
@@ -69,8 +72,8 @@ def run(test_prob,
             a1 = random.randint(0,len(population)-1)
             b1 = random.randint(0,len(population)-1)
             cross_solution = fn.crossover(population[a1].solution, population[b1].solution, crossover_rate)
-            offspring_solution = fn.mutation(cross_solution, mutation_rate, params)
-            new_individual = Individual(solution=offspring_solution, age=0, lifetime=0)
+            offspring_solution = fn.mutation(cross_solution, mutation_rate, params, test_prob)
+            new_individual = Individual(solution=offspring_solution, age=0, lifetime=-1)
             population2.append(new_individual)
         
         if 'dtlz' not in test_prob:
@@ -90,8 +93,6 @@ def run(test_prob,
             pop_size = pop_size
         elif modification == 'proportional':
             pop_size = mods.proportional(pop_size, pop_min, gen_no, fitness_tracker)
-        elif modification == 'inverse_proportional':
-            pop_size = mods.inverse_proportional(pop_size, pop_min, gen_no, fitness_tracker)
         elif modification == 'gavaps':
             pop_size = 10*initial_pop_size # maximum value
         elif modification == 'naive_linear':
@@ -119,14 +120,31 @@ def run(test_prob,
         #print("New solution: ", new_solution)
         population = [population2[i] for i in new_population]
         
-        # Iterate to next gen
-        if 'dtlz' not in test_prob:
-            gen_dist, min_fitness, max_fitness = evaluation.generational_distance(values, test_prob)
-            gen_fitness = round(gen_dist, 3)
-            fitness_tracker.append(gen_fitness)
-            #print("Generational Fitness: ", gen_fitness)
-        
 
+        # Iterate to next gen
+        gen_dist, min_dist, max_dist = evaluation.generational_distance(values , solution_size, problem_size, test_prob)
+        gen_fitness = round(gen_dist, 3)
+        fitness_tracker.append(gen_fitness)
+        
+        # Initialize lifetimes
+        for ind in population:
+            if ind.lifetime == -1:
+                ind.set_lifetime(fitness_tracker, min_dist, max_dist, min_lifetime, max_lifetime, functions, solution_size, problem_size, len(population), test_prob)
+
+        # Increase age
+        for ind in population:
+            ind.age += 1
+            
+        # remove based on age
+        if modification == 'gavaps':
+            keep_idx = []
+            for i in range(len(population)):
+                ind = population[i]
+                if ind.age < ind.lifetime:
+                    keep_idx.append(i)
+            population = [population[i] for i in keep_idx]
+        
         gen_no = gen_no + 1
+    
     
     return population, values, pop_tracker, fitness_tracker

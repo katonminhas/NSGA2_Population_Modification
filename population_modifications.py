@@ -30,28 +30,6 @@ def inverse_proportional(pop_size, pop_min, gen_no, fitness_tracker):
         return pop_size
 
     
-# GAVaPS
-def get_lifetime(ages, solution, functions):
-    print("Ages length: ", len(ages))
-    print("Ages: ", ages)
-    
-    print("Solution length: ", len(solution))
-    print("Solution: ", solution)
-    
-    
-    fitnesses = {}
-    for key in ages.keys():
-        sol = solution[key]
-        fit = []
-        for fx in functions:
-            fit.append(fx(sol))
-        fitnesses[key] = fit
-    
-    print(fitnesses)
-
-
-
-
 # Decrease the population linearly between the starting population and pop_min
 def naive_linear(initial_pop_size, pop_min, gen_no, max_gen):
     slope = (initial_pop_size - pop_min) / max_gen

@@ -12,23 +12,26 @@ import matplotlib.pyplot as plt
 
 #%% Globals
 pop_size = 100
-max_gen = 100
-solution_size = 5
+max_gen = 10
+solution_size = 10
 problem_size=3
-crossover_rate=0.1
+crossover_rate=0.9
 mutation_rate=1/solution_size
 
-test_problems = ['zdt1', 'zdt2', 'zdt3', 'zdt4', 'zdt6']
+test_problems = ['zdt1', 'zdt2', 'zdt3', 'zdt4',
+                 'dtlz1', 'dtlz2', 'dtlz3', 'dtlz4']
+
 
 population_mods = ['base',
-                   'proportional', 'inverse_proportional',
+                   'proportional',
                    'gavaps',
                    'naive_linear', 'naive_power']
 
 test_problem = 'zdt1'
+modification = 'base'
 
 sol, val, pop_tracker, fitness_tracker = nsga2_mod.run(test_prob=test_problem, 
-                                          modification='base', 
+                                          modification=modification, 
                                           pop_size=pop_size, 
                                           pop_min = round(pop_size/10),
                                           max_gen=max_gen, 
@@ -37,8 +40,7 @@ sol, val, pop_tracker, fitness_tracker = nsga2_mod.run(test_prob=test_problem,
                                           crossover_rate=crossover_rate,
                                           mutation_rate=mutation_rate)
 
-# Generational Distance
-gen_dist, min_dist, max_dist = evaluation.generational_distance(val, test_problem)
+
 
 
 if len(val) == 2:
@@ -55,6 +57,11 @@ else:
     function2 = [j for j in val[1]]
     function3 = [k for k in val[2]]
     ax.scatter(function1, function2, function3)
+    ax.set_xlim(0,1)
+    ax.set_ylim(0,1)
+    ax.set_zlim(0,1)
     ax.view_init(45, 135)
     plt.show()
+
+
     
