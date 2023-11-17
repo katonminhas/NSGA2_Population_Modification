@@ -31,6 +31,7 @@ def run(test_prob,
                                              M=problem_size)
     
     initial_pop_size = pop_size
+    pop_max = initial_pop_size * 3
     pop_tracker = []
     fitness_tracker = []
     min_lifetime, max_lifetime = 1.1, 7.1
@@ -44,7 +45,7 @@ def run(test_prob,
     
     while (gen_no<max_gen):
         
-        if gen_no%1 ==0: print("Generation: ", gen_no)
+        if gen_no%100 ==0: print("Generation: ", gen_no)
         
         pop_tracker.append(len(population))      
         #print("Pop length: ", len(population))
@@ -93,12 +94,12 @@ def run(test_prob,
         
         
         # pop_size modifications
-        if modification == 'base':
+        if modification == 'no':
             pop_size = pop_size
         elif modification == 'proportional':
-            pop_size = mods.proportional(pop_size, pop_min, gen_no, fitness_tracker)
+            pop_size = mods.proportional(pop_size, pop_min, pop_max, gen_no, fitness_tracker)
         elif modification == 'gavaps':
-            pop_size = 10*initial_pop_size # maximum value
+            pop_size = pop_max # maximum value
         elif modification == 'naive_linear':
             pop_size = mods.naive_linear(initial_pop_size, pop_min, gen_no+1, max_gen)
         elif modification == 'naive_power':
@@ -127,8 +128,8 @@ def run(test_prob,
 
         # Iterate to next gen
         gen_dist, avg_dist, min_dist, max_dist = evaluation.generational_distance(values , solution_size, problem_size, test_prob)
-        gen_fitness = round(gen_dist, 3)
-        fitness_tracker.append(gen_fitness)
+        gen_dist = round(gen_dist, 5)
+        fitness_tracker.append(gen_dist)
         
         # Initialize lifetimes
         for ind in population:
@@ -150,14 +151,14 @@ def run(test_prob,
         
         
         
-        if gen_fitness < best_fitness:
-            best_fitness = gen_fitness
+        if gen_dist < best_fitness:
+            best_fitness = gen_dist
             best_fitness_gen = gen_no
             best_population = population
             best_values = values
         
-        if (gen_no > (best_fitness_gen + 100)) or (len(population) == 0): # if no progress for 100 generations, then converged
+        if (gen_no > (best_fitness_gen + 500)) or (len(population) == 0): # if no progress for 500 generations, then converged
             return best_population, best_values, best_fitness_gen, pop_tracker, fitness_tracker
         
         gen_no = gen_no + 1
-    return population, values, pop_tracker, fitness_tracker
+    return population, values, best_fitness_gen, pop_tracker, fitness_tracker

@@ -153,39 +153,6 @@ def zdt4(n=10):
         return g(x)*h(f1(x), g(x))
     return f1, f2
     
-#%% zdt5
-
-def zdt5(n=11):
-    def u(x):
-        return x
-    def v(ux):
-        if ux < 5: return 2 + ux
-        elif ux == 5: return 1
-    def f1(x):
-        return 1 + u(x[0])
-    def g(x):
-        return sum([v(u(x[i])) for i in range(1, len(x))])
-    def h(fx, gx):
-        return 1/fx
-    def f2(x):
-        return g(x)*h(f1(x), g(x))
-    return f1, f2
-
-#%% zdt6
-
-def zdt6(n=10):
-    def f1(x):
-        return 1-math.exp(-4*x[0])*(math.sin(6*math.pi*x[0])**6)
-    
-    def g(x):
-        sum_portion = sum([x[i] for i in range(1, n)])
-        return 1 + 9 * (sum_portion/9)**0.25
-    def h(fx, gx):
-        return 1 - (fx/gx)**2
-    def f2(x):
-        return g(x)*h(f1(x), g(x))
-    
-    return f1, f2
 
 
 

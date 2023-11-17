@@ -5,7 +5,7 @@ import evaluation
 #%%
 
 # Proportional population decline (Salgotra et al)
-def proportional(pop_size, pop_min, gen_no, fitness_tracker):
+def proportional(pop_size, pop_min, pop_max, gen_no, fitness_tracker):
     
     def get_delta_t_best(fitness_tracker, gen_no):
         return (fitness_tracker[gen_no-2]-fitness_tracker[gen_no-1]) / np.abs(fitness_tracker[gen_no-1])
@@ -13,7 +13,7 @@ def proportional(pop_size, pop_min, gen_no, fitness_tracker):
         # Calculate delfa_t_best
         delta_t_best = get_delta_t_best(fitness_tracker, gen_no)
         new_pop_size = (1-delta_t_best)*pop_size
-        return round(max(new_pop_size, pop_min))
+        return round(min(max(new_pop_size, pop_min),pop_max))
     else:
         return pop_size
 
